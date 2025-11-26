@@ -4,11 +4,6 @@
 
 ## This repo is only made for SECourses Patreon Members use Above Link to Install
 
-# 1 Click Installer for Automatic1111 SD Web UI, SDXL, ControlNet, All ControlNet Models, Full xFormers and Latest Libraries Support for RTX 5000 Series GPUs and All Other GPUs With Torch 2.8 and CUDA 12.9
-
-### SECourses: FLUX, Tutorials, Guides, Resources, Training, Scripts
-*59 minutes ago* | **New**
-
 [Patreon exclusive posts index](https://github.com/FurkanGozukara/Stable-Diffusion/blob/main/Patreon-Posts-Index.md) *to find our scripts easily,* [Patreon scripts updates history](https://github.com/FurkanGozukara/Stable-Diffusion/blob/main/Generative-AI-Updates-And-News.md) *to see which updates arrived to which scripts and amazing* [Patreon special generative scripts list](https://github.com/FurkanGozukara/Stable-Diffusion/blob/main/Amazing-Generative-AI-Scripts.md) *that you can use in any of your task.*
 
 *Join discord to get help, chat, discuss and also tell me your discord username to get your special rank :* [SECourses Discord](https://discord.com/servers/software-engineering-courses-secourses-772774097734074388)
@@ -82,3 +77,4 @@ Latest installer zip file : https://www.patreon.com/posts/86307255
 <img width="1776" height="1048" alt="modelss" src="https://github.com/user-attachments/assets/a5c1de27-9d67-435d-b579-865c711ca1c4" />
 
 <img width="2000" height="2064" alt="supported" src="https://github.com/user-attachments/assets/684655a5-86b3-4bef-bff9-e02dd16eaf2d" />
+
