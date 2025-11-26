@@ -377,9 +377,10 @@ def prepare_environment():
     print(f"Version: {tag}")
     print(f"Commit hash: {commit}")
 
-    if args.reinstall_torch or not is_installed("torch") or not is_installed("torchvision"):
-        run(f'"{python}" -m {torch_command}', "Installing torch and torchvision", "Couldn't install torch", live=True)
-        startup_timer.record("install torch")
+    # DISABLED: PyTorch/TorchVision auto-install
+    # if args.reinstall_torch or not is_installed("torch") or not is_installed("torchvision"):
+    #     run(f'"{python}" -m {torch_command}', "Installing torch and torchvision", "Couldn't install torch", live=True)
+    #     startup_timer.record("install torch")
 
     if args.use_ipex:
         args.skip_torch_cuda_test = True
@@ -398,9 +399,10 @@ def prepare_environment():
         run_pip(f"install {openclip_package}", "open_clip")
         startup_timer.record("install open_clip")
 
-    if (not is_installed("xformers") or args.reinstall_xformers) and args.xformers:
-        run_pip(f"install -U -I --no-deps {xformers_package}", "xformers")
-        startup_timer.record("install xformers")
+    # DISABLED: xformers auto-install
+    # if (not is_installed("xformers") or args.reinstall_xformers) and args.xformers:
+    #     run_pip(f"install -U -I --no-deps {xformers_package}", "xformers")
+    #     startup_timer.record("install xformers")
 
     if not is_installed("ngrok") and args.ngrok:
         run_pip("install ngrok", "ngrok")
@@ -416,12 +418,13 @@ def prepare_environment():
 
     startup_timer.record("clone repositores")
 
-    if not os.path.isfile(requirements_file):
-        requirements_file = os.path.join(script_path, requirements_file)
-
-    if not requirements_met(requirements_file):
-        run_pip(f"install -r \"{requirements_file}\"", "requirements")
-        startup_timer.record("install requirements")
+    # DISABLED: requirements_versions.txt auto-install
+    # if not os.path.isfile(requirements_file):
+    #     requirements_file = os.path.join(script_path, requirements_file)
+    #
+    # if not requirements_met(requirements_file):
+    #     run_pip(f"install -r \"{requirements_file}\"", "requirements")
+    #     startup_timer.record("install requirements")
 
     if not os.path.isfile(requirements_file_for_npu):
         requirements_file_for_npu = os.path.join(script_path, requirements_file_for_npu)
