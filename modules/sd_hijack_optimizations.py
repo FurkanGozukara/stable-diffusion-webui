@@ -54,7 +54,8 @@ class SdOptimizationXformers(SdOptimization):
     priority = 100
 
     def is_available(self):
-        return shared.cmd_opts.force_enable_xformers or (shared.xformers_available and torch.cuda.is_available() and (6, 0) <= torch.cuda.get_device_capability(shared.device) <= (9, 0))
+        # Allow xformers on any CUDA GPU with capability >= 6.0 (removed upper limit for newer GPUs)
+        return shared.cmd_opts.force_enable_xformers or (shared.xformers_available and torch.cuda.is_available() and torch.cuda.get_device_capability(shared.device) >= (6, 0))
 
     def apply(self):
         ldm.modules.attention.CrossAttention.forward = xformers_attention_forward
@@ -155,11 +156,12 @@ def list_optimizers(res):
     ])
 
 
-if shared.cmd_opts.xformers or shared.cmd_opts.force_enable_xformers:
-    try:
-        import xformers.ops
-        shared.xformers_available = True
-    except Exception:
+# Try to import xformers by default (if not blocked by --no-xformers in import_hook.py)
+try:
+    import xformers.ops
+    shared.xformers_available = True
+except Exception:
+    if shared.cmd_opts.xformers or shared.cmd_opts.force_enable_xformers:
         errors.report("Cannot import xformers", exc_info=True)
 
 

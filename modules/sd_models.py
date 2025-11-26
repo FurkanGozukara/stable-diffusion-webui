@@ -216,7 +216,7 @@ def model_hash(filename):
 
 
 def select_checkpoint():
-    """Raises `FileNotFoundError` if no checkpoints are found."""
+    """Returns None if no checkpoints are found."""
     model_checkpoint = shared.opts.sd_model_checkpoint
 
     checkpoint_info = checkpoint_aliases.get(model_checkpoint, None)
@@ -230,8 +230,9 @@ def select_checkpoint():
         error_message += f"\n - directory {model_path}"
         if shared.cmd_opts.ckpt_dir is not None:
             error_message += f"\n - directory {os.path.abspath(shared.cmd_opts.ckpt_dir)}"
-        error_message += "Can't run without a checkpoint. Find and place a .ckpt or .safetensors file into any of those locations."
-        raise FileNotFoundError(error_message)
+        error_message += "\nPlace a .ckpt or .safetensors file into one of those locations to use the web UI."
+        print(error_message, file=sys.stderr)
+        return None
 
     checkpoint_info = next(iter(checkpoints_list.values()))
     if model_checkpoint is not None:
@@ -697,6 +698,8 @@ class SdModelData:
                     print("", file=sys.stderr)
                     print("Stable diffusion model failed to load", file=sys.stderr)
                     self.sd_model = None
+                finally:
+                    self.was_loaded_at_least_once = True
 
         return self.sd_model
 
@@ -786,6 +789,10 @@ def get_obj_from_str(string, reload=False):
 def load_model(checkpoint_info=None, already_loaded_state_dict=None):
     from modules import sd_hijack
     checkpoint_info = checkpoint_info or select_checkpoint()
+
+    if checkpoint_info is None:
+        print("No model loaded - please add a checkpoint to the models/Stable-diffusion folder.", file=sys.stderr)
+        return None
 
     timer = Timer()
 
