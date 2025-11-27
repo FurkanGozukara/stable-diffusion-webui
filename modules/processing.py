@@ -984,19 +984,45 @@ def process_images_inner(p: StableDiffusionProcessing) -> Processed:
 
             sd_models.apply_alpha_schedule_override(p.sd_model, p)
 
-            with devices.without_autocast() if devices.unet_needs_upcast else devices.autocast():
-                samples_ddim = p.sample(conditioning=p.c, unconditional_conditioning=p.uc, seeds=p.seeds, subseeds=p.subseeds, subseed_strength=p.subseed_strength, prompts=p.prompts)
+            # Sampling with auto-upcast retry on NaN
+            def do_sample():
+                with devices.without_autocast() if devices.unet_needs_upcast else devices.autocast():
+                    return p.sample(conditioning=p.c, unconditional_conditioning=p.uc, seeds=p.seeds, subseeds=p.subseeds, subseed_strength=p.subseed_strength, prompts=p.prompts)
 
-            if p.scripts is not None:
-                ps = scripts.PostSampleArgs(samples_ddim)
-                p.scripts.post_sample(p, ps)
-                samples_ddim = ps.samples
+            samples_ddim = None
+            nan_retry_attempted = False
+
+            while samples_ddim is None:
+                try:
+                    samples_ddim = do_sample()
+
+                    if p.scripts is not None:
+                        ps = scripts.PostSampleArgs(samples_ddim)
+                        p.scripts.post_sample(p, ps)
+                        samples_ddim = ps.samples
+
+                    if not getattr(samples_ddim, 'already_decoded', False):
+                        devices.test_for_nans(samples_ddim, "unet")
+
+                except devices.NansException as e:
+                    if nan_retry_attempted or not opts.auto_upcast_attn or opts.upcast_attn:
+                        raise e
+
+                    nan_retry_attempted = True
+                    samples_ddim = None
+
+                    errors.print_error_explanation(
+                        "A tensor with NaNs was produced in UNet.\n"
+                        "Web UI will now enable 'Upcast cross attention layer to float32' and retry.\n"
+                        "To disable this behavior, disable the 'Automatically enable upcast attention on NaN' setting.\n"
+                        "To always use upcast attention, enable the 'Upcast cross attention layer to float32' setting."
+                    )
+                    opts.upcast_attn = True
 
             if getattr(samples_ddim, 'already_decoded', False):
                 x_samples_ddim = samples_ddim
             else:
-                devices.test_for_nans(samples_ddim, "unet")
-
+                # NaN check for unet already done above during retry loop
                 if opts.sd_vae_decode_method != 'Full':
                     p.extra_generation_params['VAE Decoder'] = opts.sd_vae_decode_method
                 x_samples_ddim = decode_latent_batch(p.sd_model, samples_ddim, target_device=devices.cpu, check_for_nans=True)
