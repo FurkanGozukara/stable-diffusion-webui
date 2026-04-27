@@ -10,7 +10,7 @@
 #clone_dir="stable-diffusion-webui"
 
 # Commandline arguments for webui.py, for example: export COMMANDLINE_ARGS="--medvram --opt-split-attention"
-export COMMANDLINE_ARGS="--no-download-sd-model --xformers --share"
+export COMMANDLINE_ARGS="--no-download-sd-model --xformers --share --no-half-vae --enable-insecure-extension-access"
 export STABLE_DIFFUSION_REPO="https://github.com/w-e-w/stablediffusion.git"
 
 # python3 executable
