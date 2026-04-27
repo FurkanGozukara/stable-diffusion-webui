@@ -40,7 +40,15 @@ Latest installer zip file : https://www.patreon.com/posts/86307255
 *   If it doesn't work make sure to below tutorial and install everything exactly as shown in this below tutorial
 *   [https://youtu.be/DrhUHnYfwC0](https://youtu.be/DrhUHnYfwC0)
 
-### 28 March 2028 V12
+### 27 April 2026 V13
+
+*   Since it has been requested I have added Deforum to be automatically installed with the installers
+*   Both Windows and RunPod and Massed Compute (Linux users can use this) installers now auto install Deforum
+*   --no-half-vae default added for both Windows and RunPod and Massed Compute
+*   For Linux users --enable-insecure-extension-access auto activated (to install extensions from Gradio Live share)
+*   Please use latest zip file and make a fresh install and move your older models since I regenerated GitHub repos for faster installation
+
+### 28 March 2026 V12
 
 *   Installers completey modernized
 *   Now entire installation is made with uv installer on Windows, RunPod and Massed Compute (Linux users)
